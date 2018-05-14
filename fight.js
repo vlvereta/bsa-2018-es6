@@ -1,13 +1,14 @@
 class Fighter {
-
+	// default parameters
 	constructor(name = 'fighter', power = 7, health = 1000) {
 		this.name = name;
 		this.power = power;
 		this.health = health;
 	}
 
-	setDamage(damage = 100) {
+	setDamage(damage) {
 		this.health -= damage;
+		// string interpolation
 		console.log(`${this.name}'s health: ${this.health}`);
 	}
 
@@ -16,40 +17,55 @@ class Fighter {
 	}
 }
 
+// inheritance
 class ImprovedFighter extends Fighter {
 
 	doubleHit(enemy, point = 10) {
+		// super
 		super.hit(enemy, point * 2);
 	}
 }
 
-let fighter = new Fighter('vlad', 10);
-let improvedFighter = new ImprovedFighter('alex', 9, 1150);
+// creating new object using spread operator
+let fighter = new Fighter(...['vlad', 10, 1000]);
 
+// creating new object using default parameters
+let improvedFighter = new ImprovedFighter('alex');
+
+// rest operator
 function fight(...args) {
 
 	let len = args.length;
+	// check for proper parameters (two fighters and points to hit)
 	if (len >= 2 && args[0] instanceof Fighter && args[1] instanceof Fighter) {
 		let f1 = args[0];
 		let f2 = args[1];
-		let point = args.slice(2);
-		if (point) {
-			let pointLen = point.length;
-			for (let i = 0; ; i++) {
-				i %= pointLen;
-				f1.hit(f2, point[i]);
-				if (f2.health <= 0) {
-					console.log(f1.name + " WINs!");
-					break;
-				}
-				f2.hit(f1, point[i]);
-				if (f1.health <= 0) {
-					console.log(f2.name + " WINs!");
-					break;
-				}
+
+		// creating points array from the rest arguments
+		let points = args.slice(2);
+		let pointLen = points.length;
+		for (let i = 0; ; i++) {
+			// to choose index that is in the array range 
+			i %= pointLen;
+			// check is integer, if not, will be used default point
+			if (Number.isInteger(points[i])) {
+				f1.hit(f2, points[i]);
+				f2.hit(f1, points[i]);
+			} else {
+				f1.hit(f2);
+				f2.hit(f1);
+			}
+			// check if anyone died after this round
+			if (f1.health <= 0 || f2.health <= 0) {
+				let name = f2.health <= 0 ? f1.name : f2.name;
+				console.log(`${name} WINs!`);
+				break;
 			}
 		}
 	}
 }
 
+console.log('First fight!');
+fight(fighter, improvedFighter);
+console.log('Second fight!');
 fight(fighter, improvedFighter, 25, 13, 45);
