@@ -65,7 +65,4 @@ function fight(...args) {
 	}
 }
 
-console.log('First fight!');
-fight(fighter, improvedFighter);
-console.log('Second fight!');
 fight(fighter, improvedFighter, 25, 13, 45);
